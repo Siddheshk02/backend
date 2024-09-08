@@ -1,4 +1,4 @@
-module idea/generator
+module github.com/Siddheshk02/idea-generator
 
 go 1.22.3
 

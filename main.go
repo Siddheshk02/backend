@@ -55,8 +55,13 @@ func main() {
 
 	http.HandleFunc("/api/generate-ideas", generateIdeasHandler)
 
+	allowedOrigins := []string{"http://localhost:3000"}
+	if prodOrigin := os.Getenv("ALLOWED_ORIGIN"); prodOrigin != "" {
+		allowedOrigins = append(allowedOrigins, prodOrigin)
+	}
+
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedOrigins:   allowedOrigins,
 		AllowedMethods:   []string{"POST"},
 		AllowedHeaders:   []string{"Content-Type", "Authorization"},
 		AllowCredentials: false,
