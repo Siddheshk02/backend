@@ -48,10 +48,8 @@ type GroqRequest struct {
 }
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+
+	_ = godotenv.Load()
 
 	http.HandleFunc("/api/generate-ideas", generateIdeasHandler)
 
