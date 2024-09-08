@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/joho/godotenv"
 	"github.com/rs/cors"
@@ -53,19 +54,27 @@ func main() {
 
 	http.HandleFunc("/api/generate-ideas", generateIdeasHandler)
 
-	allowedOrigins := []string{"http://localhost:3000"}
-	if prodOrigin := os.Getenv("ALLOWED_ORIGIN"); prodOrigin != "" {
-		allowedOrigins = append(allowedOrigins, prodOrigin)
+	allowedOrigins := strings.Split(os.Getenv("ALLOWED_ORIGINS"), ",")
+	if len(allowedOrigins) == 0 || (len(allowedOrigins) == 1 && allowedOrigins[0] == "") {
+		allowedOrigins = []string{"http://localhost:3000"} // Fallback for local development
 	}
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   allowedOrigins,
-		AllowedMethods:   []string{"POST"},
+		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
 		AllowedHeaders:   []string{"Content-Type", "Authorization"},
-		AllowCredentials: false,
+		AllowCredentials: true,
+		Debug:            true, // Enable for debugging, remove in production
 	})
 
-	handler := c.Handler(http.DefaultServeMux)
+	// Wrap your handlers with the CORS middleware
+	handler := c.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/api/generate-ideas" {
+			generateIdeasHandler(w, r)
+			return
+		}
+		http.NotFound(w, r)
+	}))
 
 	port := os.Getenv("PORT")
 	if port == "" {
