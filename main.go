@@ -52,13 +52,10 @@ func main() {
 
 	_ = godotenv.Load()
 
-	http.HandleFunc("/api/generate-ideas", generateIdeasHandler)
-
 	allowedOrigins := strings.Split(os.Getenv("ALLOWED_ORIGINS"), ",")
 	if len(allowedOrigins) == 0 || (len(allowedOrigins) == 1 && allowedOrigins[0] == "") {
 		allowedOrigins = []string{"http://localhost:3000"} // Fallback for local development
 	}
-	fmt.Println(allowedOrigins)
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   allowedOrigins,
@@ -71,7 +68,6 @@ func main() {
 	// Wrap your handlers with the CORS middleware
 	handler := c.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-		// w.Header().Set("Origin", "https://idea-generator-sigma.vercel.app")
 		if r.URL.Path == "/api/generate-ideas" {
 			generateIdeasHandler(w, r)
 			return
