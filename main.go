@@ -69,7 +69,7 @@ func main() {
 
 	// Wrap your handlers with the CORS middleware
 	handler := c.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Origin", "https://idea-generator-sigma.vercel.app")
 		if r.URL.Path == "/api/generate-ideas" {
 			generateIdeasHandler(w, r)
 			return
