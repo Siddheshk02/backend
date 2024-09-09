@@ -58,19 +58,20 @@ func main() {
 	if len(allowedOrigins) == 0 || (len(allowedOrigins) == 1 && allowedOrigins[0] == "") {
 		allowedOrigins = []string{"http://localhost:3000"} // Fallback for local development
 	}
+	fmt.Println(allowedOrigins)
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   allowedOrigins,
 		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
-		AllowedHeaders:   []string{"*"},
+		AllowedHeaders:   []string{"Content-Type", "Authorization", "Accept"},
 		AllowCredentials: true,
 		Debug:            true, // Enable for debugging, remove in production
 	})
 
 	// Wrap your handlers with the CORS middleware
 	handler := c.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "https://idea-generator-sigma.vercel.app")
-		w.Header().Set("Origin", "https://idea-generator-sigma.vercel.app")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		// w.Header().Set("Origin", "https://idea-generator-sigma.vercel.app")
 		if r.URL.Path == "/api/generate-ideas" {
 			generateIdeasHandler(w, r)
 			return
@@ -88,7 +89,7 @@ func main() {
 }
 
 func generateIdeasHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
+	if r.Method != http.MethodPost && r.Method != http.MethodOptions {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
