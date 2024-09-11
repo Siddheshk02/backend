@@ -1,0 +1,14 @@
+name: Keep Backend Service Awake
+
+on:
+  schedule:
+    # Runs every 10 minutes to keep the backend awake
+    - cron: '*/10 * * * *'
+
+jobs:
+  keep-awake:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Backend Service
+        run: |
+          curl -X POST https://backend-ft3b.onrender.com/api/generate-ideas
