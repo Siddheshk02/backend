@@ -2,7 +2,7 @@ name: Keep Backend Service Awake
 
 on:
   schedule:
-    # Runs every 10 minutes to keep the backend awake
+    # Runs every 5 minutes to keep the backend awake
     - cron: '*/5 * * * *'
 
 jobs:
